@@ -1,10 +1,12 @@
 from window import window, Background
+from display_elements import MenuTitle
 import pygame
 import sys
 
 
 def redraw():
     background.draw(display)
+    menu_title.draw(display)
 
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
@@ -20,6 +22,9 @@ def loop():
             if event.type == pygame.QUIT:
                 run = False
 
+        # TEMPORARY !!!
+        import time
+        time.sleep(0.1)
         redraw()
 
     pygame.quit()
@@ -38,5 +43,6 @@ if __name__ == "__main__":
 
     # Initialize window objects
     background = Background()
+    menu_title = MenuTitle()
 
     loop()
