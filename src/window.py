@@ -1,4 +1,5 @@
 import pygame
+import time
 import os
 
 pygame.init()
@@ -18,12 +19,16 @@ class Window:
 
         # Framerate
         self.framerate = 60
+        self.last_time = time.perf_counter()
+        self.update_deltatime()
 
     def update_gameinfo(self):
         pass
 
     def update_deltatime(self):
-        pass
+        self.delta_time = time.perf_counter() - self.last_time
+        self.delta_time *= 60
+        self.last_time = time.perf_counter()
 
 
 class Background:

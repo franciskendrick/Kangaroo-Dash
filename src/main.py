@@ -22,10 +22,8 @@ def loop():
             if event.type == pygame.QUIT:
                 run = False
 
-        # TEMPORARY !!!
-        import time
-        time.sleep(0.1)
         redraw()
+        clock.tick(window.framerate)
 
     pygame.quit()
     sys.exit()
@@ -40,6 +38,8 @@ if __name__ == "__main__":
         int(window.rect.height * window.enlarge))
     win = pygame.display.set_mode(win_size)
     display = pygame.Surface(window.rect.size)
+    pygame.display.set_caption("Kangaroo Dash")
+    clock = pygame.time.Clock()
 
     # Initialize window objects
     background = Background()
