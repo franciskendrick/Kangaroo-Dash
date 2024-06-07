@@ -1,5 +1,5 @@
 from window import window, Background
-from display_elements import MenuTitle
+from display_elements import MenuTitle, Tutorial
 import pygame
 import sys
 
@@ -7,6 +7,7 @@ import sys
 def redraw():
     background.draw(display)
     menu_title.draw(display)
+    tutorial.draw(display)
 
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
@@ -15,7 +16,7 @@ def redraw():
     pygame.display.update()
 
 
-def loop():
+def loop(): 
     run = True
     while run:
         for event in pygame.event.get():
@@ -44,5 +45,6 @@ if __name__ == "__main__":
     # Initialize window objects
     background = Background()
     menu_title = MenuTitle()
+    tutorial = Tutorial()
 
     loop()

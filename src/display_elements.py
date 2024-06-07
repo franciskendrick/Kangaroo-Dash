@@ -56,6 +56,41 @@ class MenuTitle:
         img, rect = self.frames[self.idx // multiplier]
         display.blit(img, rect)
 
-        # Update
+        # Update frame
         if self.idx < (len(self.frames) - 1) * multiplier:
             self.idx += 1
+
+
+class Tutorial:
+    def __init__(self):
+        spriteset = pygame.image.load(
+            f"{resources_path}/sprites/tutorial.png")
+        self.idx = 0
+
+        # Frames
+        self.frames = []
+        for img in clip_set_to_list_on_yaxis(spriteset):
+            # Initialize
+            img_rect = pygame.Rect(
+                (67, 81), img.get_size())
+            
+            # Append
+            frame = [img, img_rect]
+            self.frames.append(frame)
+
+    def draw(self, display):
+        # Delta multiplier
+        dt = round(window.delta_time)
+        dt_multiplier = round(8 / dt) if dt > 0 else 0
+        multiplier = dt_multiplier if dt_multiplier > 0 else 8
+
+        # Update frame
+        if self.idx >= len(self.frames) * multiplier:
+            self.idx = 0
+        
+        # Draw
+        img, rect = self.frames[self.idx // multiplier]
+        display.blit(img, rect)
+
+        # Update frame
+        self.idx += 1
