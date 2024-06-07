@@ -64,7 +64,7 @@ class MenuTitle:
 class Tutorial:
     def __init__(self):
         spriteset = pygame.image.load(
-            f"{resources_path}/sprites/tutorial.png")
+            f"{resources_path}/titles/tutorial.png")
         self.idx = 0
 
         # Frames

@@ -1,13 +1,15 @@
 from window import window, Background
 from display_elements import MenuTitle, Tutorial
+from player import Player
 import pygame
 import sys
 
 
-def redraw():
+def redraw_menu():
     background.draw(display)
     menu_title.draw(display)
     tutorial.draw(display)
+    player.draw(display)
 
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
@@ -16,14 +18,14 @@ def redraw():
     pygame.display.update()
 
 
-def loop(): 
+def menu_loop(): 
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-        redraw()
+        redraw_menu()
         clock.tick(window.framerate)
 
     pygame.quit()
@@ -42,9 +44,12 @@ if __name__ == "__main__":
     pygame.display.set_caption("Kangaroo Dash")
     clock = pygame.time.Clock()
 
-    # Initialize window objects
+    # Initialize objects
     background = Background()
     menu_title = MenuTitle()
     tutorial = Tutorial()
 
-    loop()
+    player = Player()
+
+    # Run the game
+    menu_loop()
