@@ -32,8 +32,6 @@ def redraw_game():
 def menu_loop(): 
     run = True
     while run:
-        window.update_deltatime()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -85,5 +83,5 @@ if __name__ == "__main__":
     player = Player()
 
     # Run the game
-    # menu_loop()
-    game_loop()  # TEMPORARY !!!
+    menu_loop()
+    # game_loop()  # TEMPORARY !!!

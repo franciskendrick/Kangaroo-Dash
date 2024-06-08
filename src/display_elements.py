@@ -1,5 +1,4 @@
 from functions import clip_set_to_list_on_yaxis
-from window import window
 import pygame
 import os
 
@@ -44,20 +43,15 @@ class MenuTitle:
             self.shadows.append(shadow)
 
     def draw(self, display):
-        # Delta multiplier
-        dt = round(window.delta_time)
-        dt_multiplier = round(6 / dt) if dt > 0 else 0
-        multiplier = dt_multiplier if dt_multiplier > 0 else 6
-
         # Draw
-        img, rect = self.shadows[self.idx // multiplier]
+        img, rect = self.shadows[self.idx // 6]
         display.blit(img, rect)
 
-        img, rect = self.frames[self.idx // multiplier]
+        img, rect = self.frames[self.idx // 6]
         display.blit(img, rect)
 
         # Update frame
-        if self.idx < (len(self.frames) - 1) * multiplier:
+        if self.idx < (len(self.frames) - 1) * 6:
             self.idx += 1
 
 
@@ -79,17 +73,12 @@ class Tutorial:
             self.frames.append(frame)
 
     def draw(self, display):
-        # Delta multiplier
-        dt = round(window.delta_time)
-        dt_multiplier = round(8 / dt) if dt > 0 else 0
-        multiplier = dt_multiplier if dt_multiplier > 0 else 8
-
         # Update frame
-        if self.idx >= len(self.frames) * multiplier:
+        if self.idx >= len(self.frames) * 8:
             self.idx = 0
         
         # Draw
-        img, rect = self.frames[self.idx // multiplier]
+        img, rect = self.frames[self.idx // 8]
         display.blit(img, rect)
 
         # Update frame

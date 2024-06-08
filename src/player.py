@@ -1,5 +1,4 @@
 from functions import clip_set_to_list_on_xaxis
-from window import window
 import pygame
 import os
 
@@ -36,17 +35,12 @@ class Player:
 
     # Draw
     def draw(self, display):
-        # Delta multiplier
-        dt = round(window.delta_time)
-        dt_multiplier = round(8 / dt) if dt > 0 else 0
-        multiplier = dt_multiplier if dt_multiplier > 0 else 8
-        
         # Update frame
-        if self.idx >= len(self.images) * multiplier:
+        if self.idx >= len(self.images) * 8:
             self.idx = 0
 
         # Draw
-        img = self.images[self.idx // multiplier]
+        img = self.images[self.idx // 8]
         display.blit(img, (self.x, self.y))
 
         # Update frame
