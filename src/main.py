@@ -36,6 +36,11 @@ def menu_loop():
             if event.type == pygame.QUIT:
                 run = False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                    player.jump()
+                    game_loop()
+
         redraw_menu()
         clock.tick(window.framerate)
 
@@ -84,4 +89,3 @@ if __name__ == "__main__":
 
     # Run the game
     menu_loop()
-    # game_loop()  # TEMPORARY !!!

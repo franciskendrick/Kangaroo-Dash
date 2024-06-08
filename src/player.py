@@ -1,4 +1,4 @@
-from functions import clip_set_to_list_on_xaxis
+from functions import separate_sets_from_yaxis, clip_set_to_list_on_xaxis
 import pygame
 import os
 
@@ -19,28 +19,31 @@ class Player:
         self.t = 0
 
         # Sprite
-        spriteset = pygame.image.load(
-            f"{resources_path}/sprites/kangaroo.png")
+        spritesets = separate_sets_from_yaxis(
+            pygame.image.load(f"{resources_path}/sprites/kangaroo.png"),
+            (255, 0, 0))
+        
         self.idx = 0
-
-        # Images 
-        self.images = [img for img in clip_set_to_list_on_xaxis(spriteset)]
+        self.imgtype = "idle"
+        self.images = {
+            "idle": [img for img in clip_set_to_list_on_xaxis(spritesets[0])],
+            "run": [img for img in clip_set_to_list_on_xaxis(spritesets[1])],
+            "duck": [img for img in clip_set_to_list_on_xaxis(spritesets[2])]
+        }
 
         # Action
-        self.actions = {
-            "run": True,
-            "jump": False,
-            "duck": False
-        }
+        self.action = "run"
 
     # Draw
     def draw(self, display):
+        images = self.images[self.imgtype]
+
         # Update frame
-        if self.idx >= len(self.images) * 8:
+        if self.idx >= len(images) * 8:
             self.idx = 0
 
         # Draw
-        img = self.images[self.idx // 8]
+        img = images[self.idx // 8]
         display.blit(img, (self.x, self.y))
 
         # Update frame
@@ -48,31 +51,25 @@ class Player:
 
     # Actions
     def run(self):
-        self.actions = {
-            "run": True,
-            "jump": False,
-            "duck": False
-        }
+        self.action = "run"
+        self.imgtype = "run"
 
     def jump(self):
-        self.actions = {
-            "run": False,
-            "jump": True,
-            "duck": False
-        }
+        self.action = "jump"
+        self.imgtype = "run"
+
+    def duck(self):
+        self.action = "duck"
+        self.imgtype = "duck"
 
     # Update
     def update(self):
-        if self.actions["jump"]:
-            y = (23/50) * ((self.t - 10) ** 2) + 41
+        if self.action == "jump":
+            y = (23/50) * ((self.t - 10) ** 2) + 41  # parabola
             self.y = y
             self.t += self.speed_constant
 
             if self.y > 87 or self.t >= 21:
                 self.t = 0
                 self.y = 87
-                self.actions = {
-                    "run": True,
-                    "jump": False,
-                    "duck": False
-                }
+                self.run()
