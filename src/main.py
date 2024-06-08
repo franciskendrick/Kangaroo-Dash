@@ -18,14 +18,47 @@ def redraw_menu():
     pygame.display.update()
 
 
+def redraw_game():
+    background.draw(display)
+    player.draw(display)
+
+    # Blit to screen
+    resized_display = pygame.transform.scale(display, win_size)
+    win.blit(resized_display, (0, 0))
+
+    pygame.display.update()
+
+
 def menu_loop(): 
+    run = True
+    while run:
+        window.update_deltatime()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+        redraw_menu()
+        clock.tick(window.framerate)
+
+    pygame.quit()
+    sys.exit()
+
+
+def game_loop():
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-        redraw_menu()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    player.jump()
+
+        player.update()
+
+        redraw_game()
         clock.tick(window.framerate)
 
     pygame.quit()
@@ -52,4 +85,5 @@ if __name__ == "__main__":
     player = Player()
 
     # Run the game
-    menu_loop()
+    # menu_loop()
+    game_loop()  # TEMPORARY !!!
