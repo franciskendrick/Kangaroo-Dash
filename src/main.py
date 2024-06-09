@@ -3,6 +3,7 @@ from display_elements import MenuTitle, Tutorial
 from obstacles import BigCactus, SmallCactus, Bird
 from player import Player
 import pygame
+import random
 import sys
 
 
@@ -23,11 +24,8 @@ def redraw_menu():
 def redraw_game():
     background.draw_bg(display)
     player.draw(display)
-
-    bigcactus.draw(display)  # !!!
-    smallcactus.draw(display)  # !!!
-    bird.draw(display)  # !!!
-
+    for obstacle in obstacles:
+        obstacle.draw(display)
     background.draw_floor(display)
 
     # Blit to screen
@@ -76,8 +74,26 @@ def game_loop():
         elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.action != "jump":
             player.duck()
 
+        # Update player
         player.update()
 
+        # Update obstacles
+        removing_obstacles = []
+        for obstacle in obstacles:
+            obstacle.update()
+
+            if obstacle.x + obstacle.size[0] <= 0:
+                removing_obstacles.append(obstacle)
+                
+                add_x = (obstacles[-1].x // 16) - random.randint(1, 5)
+                new_obstacle = random.choice([BigCactus, SmallCactus, Bird])
+                obstacles.append(
+                    new_obstacle(random.randint(0, 2), add_x))
+                
+        for obstacle in removing_obstacles:
+            obstacles.pop(obstacles.index(obstacle))
+
+        # Redraw
         redraw_game()
         clock.tick(window.framerate)
 
@@ -102,10 +118,20 @@ if __name__ == "__main__":
     menu_title = MenuTitle()
     tutorial = Tutorial()
 
+    # Initialize entities
     player = Player()
-    bigcactus = BigCactus(0)  # !!!
-    smallcactus = SmallCactus(0)  # !!!
-    bird = Bird(2)  # !!!
 
+    obstacles = []
+    add_x = 0
+    for i in range(3):
+        obstacle = random.choice([BigCactus, SmallCactus, Bird])
+        add_x = add_x if add_x == 0 else add_x - random.randint(1, 5)
+
+        obstacles.append(
+            obstacle(random.randint(0, 2), add_x)
+        )
+
+        add_x += 16
+    
     # Run the game
     menu_loop()

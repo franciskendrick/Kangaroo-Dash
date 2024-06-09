@@ -12,14 +12,16 @@ resources_path = os.path.abspath(
 
 
 class BigCactus:
-    def __init__(self, size):
+    def __init__(self, size, add_x):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/big_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
         self.image = images[size]
+        self.size = self.image.get_size()
 
-        self.x, self.y = (80, 79)  # !!!
-        self.vel = 1
+        self.x = (add_x * 16) + 256
+        self.y = 79
+        self.vel = 2
 
     def draw(self, display):
         display.blit(self.image, (self.x, self.y))
@@ -29,14 +31,16 @@ class BigCactus:
 
 
 class SmallCactus:
-    def __init__(self, size):
+    def __init__(self, size, add_x):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/small_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
         self.image = images[size]
+        self.size = self.image.get_size()
 
-        self.x, self.y = (100, 95)  # !!!
-        self.vel = 1
+        self.x = (add_x * 16) + 256
+        self.y = 95
+        self.vel = 2
 
     def draw(self, display):
         display.blit(self.image, (self.x, self.y))
@@ -46,14 +50,17 @@ class SmallCactus:
 
 
 class Bird:
-    def __init__(self, height):
+    def __init__(self, height, add_x):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/bird.png")
         self.images = clip_set_to_list_on_xaxis(spriteset)
         self.idx = 0
 
-        self.x = 120  # !!!
+        self.size = self.images[0].get_size()
+
+        self.x = (add_x * 16) + 256
         self.y = (16 * (4 + height)) + 2
+        self.vel = 2
 
     def draw(self, display):
         # Update frame
@@ -66,3 +73,6 @@ class Bird:
 
         # Update frame
         self.idx += 1
+
+    def update(self):
+        self.x -= self.vel
