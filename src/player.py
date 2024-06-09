@@ -37,6 +37,7 @@ class Player:
     # Draw
     def draw(self, display):
         images = self.images[self.imgtype]
+        y_offset = 12 if self.imgtype == "duck" else 0
 
         # Update frame
         if self.idx >= len(images) * 8:
@@ -44,7 +45,7 @@ class Player:
 
         # Draw
         img = images[self.idx // 8]
-        display.blit(img, (self.x, self.y))
+        display.blit(img, (self.x, self.y + y_offset))
 
         # Update frame
         self.idx += 1

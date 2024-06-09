@@ -37,8 +37,11 @@ def menu_loop():
                 run = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w or event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     player.jump()
+                    game_loop()
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    player.duck()
                     game_loop()
 
         redraw_menu()
@@ -55,9 +58,15 @@ def game_loop():
             if event.type == pygame.QUIT:
                 run = False
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    player.jump()
+            if event.type == pygame.KEYUP:
+                if (event.key == pygame.K_DOWN or event.key == pygame.K_s) and player.action == "duck":
+                    player.run()
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            player.jump()
+        elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.action != "jump":
+            player.duck()
 
         player.update()
 
