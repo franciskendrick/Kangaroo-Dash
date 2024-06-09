@@ -36,10 +36,12 @@ class Background:
         self.floor = (
             pygame.image.load(f"{path}/floor.png"), (0, 107))
 
-    def draw(self, display):
+    def draw_bg(self, display):
         display.blit(*self.background)
         display.blit(*self.middleground)
         display.blit(*self.foreground)
+
+    def draw_floor(self, display):
         display.blit(*self.floor)
 
 

@@ -1,12 +1,14 @@
 from window import window, Background
 from display_elements import MenuTitle, Tutorial
+from obstacles import BigCactus, SmallCactus, Bird
 from player import Player
 import pygame
 import sys
 
 
 def redraw_menu():
-    background.draw(display)
+    background.draw_bg(display)
+    background.draw_floor(display)
     menu_title.draw(display)
     tutorial.draw(display)
     player.draw(display)
@@ -19,8 +21,14 @@ def redraw_menu():
 
 
 def redraw_game():
-    background.draw(display)
+    background.draw_bg(display)
     player.draw(display)
+
+    bigcactus.draw(display)  # !!!
+    smallcactus.draw(display)  # !!!
+    bird.draw(display)  # !!!
+
+    background.draw_floor(display)
 
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
@@ -95,6 +103,9 @@ if __name__ == "__main__":
     tutorial = Tutorial()
 
     player = Player()
+    bigcactus = BigCactus(0)  # !!!
+    smallcactus = SmallCactus(0)  # !!!
+    bird = Bird(2)  # !!!
 
     # Run the game
     menu_loop()
