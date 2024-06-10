@@ -82,10 +82,10 @@ def game_loop():
         for obstacle in obstacles:
             obstacle.update()
 
-            if obstacle.x + obstacle.size[0] <= 0:
+            if obstacle.x + obstacle.dimensions[0] <= 0:
                 removing_obstacles.append(obstacle)
                 
-                add_x = (obstacles[-1].x // 16) - random.randint(1, 5)
+                add_x = (obstacles[-1].x // 16) - random.randint(1, 7)
                 new_obstacle = random.choice([BigCactus, SmallCactus, Bird])
                 obstacles.append(
                     new_obstacle(random.randint(0, 2), add_x))
