@@ -80,8 +80,16 @@ def game_loop():
         # Update obstacles
         removing_obstacles = []
         for obstacle in obstacles:
+            # Update movement
             obstacle.update()
 
+            # Collision detection
+            player_hitboxes = player.get_hitboxes()
+            for hitbox in player_hitboxes:
+                if hitbox.colliderect(obstacle.hitbox):
+                    pass
+
+            # Update obstacles on screen
             if obstacle.x + obstacle.dimensions[0] <= 0:
                 removing_obstacles.append(obstacle)
                 

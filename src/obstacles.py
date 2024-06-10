@@ -43,7 +43,6 @@ class BigCactus:
 
     def draw(self, display):
         display.blit(self.image, (self.x, self.y))
-        pygame.draw.rect(display, (255, 0, 0), self.hitbox, 1)
 
     def update(self):
         # Update movement

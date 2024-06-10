@@ -34,7 +34,7 @@ class Player:
         self.t = 0
 
         # Hitbox
-        self.hitbox = {
+        self.hitboxes = {
             "run": [
                 pygame.Rect(self.x + 17, self.y + 4, 5, 4),
                 pygame.Rect(self.x + 14, self.y + 7, 5, 10),
@@ -92,7 +92,7 @@ class Player:
                 self.run()
 
         # Update hitbox
-        self.hitbox = {
+        self.hitboxes = {
             "run": [
                 pygame.Rect(self.x + 17, self.y + 4, 5, 4),
                 pygame.Rect(self.x + 14, self.y + 7, 5, 10),
@@ -103,3 +103,7 @@ class Player:
                 pygame.Rect(self.x + 24, self.y + 3 + self.duck_offset, 4, 4)
             ]
         }
+
+    # Fetch functions
+    def get_hitboxes(self):
+        return self.hitboxes[self.imgtype]
