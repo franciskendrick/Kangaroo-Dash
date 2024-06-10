@@ -12,22 +12,49 @@ resources_path = os.path.abspath(
 
 
 class BigCactus:
+    hitbox_offsets = [
+        (1, 2), 
+        (2, 2), 
+        (2, 2)
+    ]
+    hitbox_dimensions = [
+        (14, 31),
+        (30, 31),
+        (46, 31)
+    ]
+
     def __init__(self, size, add_x):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/big_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
         self.image = images[size]
-        self.size = self.image.get_size()
+        self.dimensions = self.image.get_size()
+        self.size = size
 
         self.x = (add_x * 16) + 256
         self.y = 79
-        self.vel = 2
+        self.vel = 0.5
+
+        offset_x, offset_y = self.hitbox_offsets[size]
+        wd, ht = self.hitbox_dimensions[size]
+        self.hitbox = pygame.Rect(
+            self.x + offset_x, self.y + offset_y, wd, ht
+        )
 
     def draw(self, display):
         display.blit(self.image, (self.x, self.y))
+        pygame.draw.rect(display, (255, 0, 0), self.hitbox, 1)
 
     def update(self):
+        # Update movement
         self.x -= self.vel
+
+        # Update hitbox
+        offset_x, offset_y = self.hitbox_offsets[self.size]
+        wd, ht = self.hitbox_dimensions[self.size]
+        self.hitbox = pygame.Rect(
+            self.x + offset_x, self.y + offset_y, wd, ht
+        )
 
 
 class SmallCactus:
@@ -36,11 +63,11 @@ class SmallCactus:
             f"{resources_path}/sprites/small_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
         self.image = images[size]
-        self.size = self.image.get_size()
+        self.dimensions = self.image.get_size()
 
         self.x = (add_x * 16) + 256
         self.y = 95
-        self.vel = 2
+        self.vel = 0.5
 
     def draw(self, display):
         display.blit(self.image, (self.x, self.y))
@@ -56,11 +83,11 @@ class Bird:
         self.images = clip_set_to_list_on_xaxis(spriteset)
         self.idx = 0
 
-        self.size = self.images[0].get_size()
+        self.dimensions = self.images[0].get_size()
 
         self.x = (add_x * 16) + 256
         self.y = (16 * (4 + height)) + 2
-        self.vel = 2
+        self.vel = 0.5
 
     def draw(self, display):
         # Update frame
