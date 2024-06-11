@@ -11,10 +11,10 @@ resources_path = os.path.abspath(
 )
 
 
-class MenuTitle:
-    def __init__(self):
+class Title:
+    def init(self, filename, x, y):
         animation_set = pygame.image.load(
-            f"{resources_path}/titles/menu.png")
+            f"{resources_path}/titles/{filename}.png")
         self.idx = 0
 
         # Frames
@@ -23,9 +23,9 @@ class MenuTitle:
         for img in clip_set_to_list_on_yaxis(animation_set):
             # Initialize
             img_rect = pygame.Rect(
-                (0, 0), img.get_size())
+                (x, y), img.get_size())
             shadow_rect = pygame.Rect(
-                (-2, 1), img.get_size())
+                (x - 2, y + 1), img.get_size())
             
             # Resize
             wd, ht = img.get_size()
@@ -55,48 +55,18 @@ class MenuTitle:
             self.idx += 1
 
 
-class GameoverTitle:
+class MenuTitle(Title):
     def __init__(self):
-        animation_set = pygame.image.load(
-            f"{resources_path}/titles/gameover.png")
-        self.idx = 0
+        super().__init__()
 
-        # Frames
-        self.frames = []
-        self.shadows = []
-        for img in clip_set_to_list_on_yaxis(animation_set):
-            # Initialize
-            img_rect = pygame.Rect(
-                (38, 0), img.get_size())
-            shadow_rect = pygame.Rect(
-                (36, 1), img.get_size())
-            
-            # Resize
-            wd, ht = img.get_size()
-            size = (wd * 2, ht * 2)
-            img = pygame.transform.scale(img, size)
+        self.init("menu", 0, 0)
 
-            # Set shadows to transparent
-            shadow_img = img.copy()
-            shadow_img.set_alpha(100)
 
-            # Append
-            frame = [img, img_rect]
-            shadow = [shadow_img, shadow_rect]
-            self.frames.append(frame)
-            self.shadows.append(shadow)
-    
-    def draw(self, display):
-        # Draw
-        img, rect = self.shadows[self.idx // 6]
-        display.blit(img, rect)
-
-        img, rect = self.frames[self.idx // 6]
-        display.blit(img, rect)
-
-        # Update frame
-        if self.idx < (len(self.frames) - 1) * 6:
-            self.idx += 1
+class GameoverTitle(Title):
+    def __init__(self):
+        super().__init__()
+        
+        self.init("gameover", 38, 0)
 
 
 class Tutorial:
