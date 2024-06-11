@@ -31,6 +31,8 @@ class BigCactus:
         self.dimensions = self.image.get_size()
         self.size = size
 
+        self.pause = False
+
         self.x = (add_x * 16) + 256
         self.y = 79
         self.vel = 1
@@ -72,6 +74,8 @@ class SmallCactus:
         self.dimensions = self.image.get_size()
         self.size = size
 
+        self.pause = False
+
         self.x = (add_x * 16) + 256
         self.y = 95
         self.vel = 1
@@ -104,6 +108,7 @@ class Bird:
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/bird.png")
         self.images = clip_set_to_list_on_xaxis(spriteset)
+        self.pause = False
         self.idx = 0
 
         self.dimensions = self.images[0].get_size()
@@ -128,7 +133,8 @@ class Bird:
         display.blit(img, (self.x, self.y))
 
         # Update frame
-        self.idx += 1
+        if not self.pause:
+            self.idx += 1
 
     def update(self):
         self.x -= self.vel

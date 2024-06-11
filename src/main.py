@@ -1,5 +1,5 @@
 from window import window, Background
-from display_elements import MenuTitle, Tutorial
+from display_elements import MenuTitle, GameoverTitle, Tutorial
 from obstacles import BigCactus, SmallCactus, Bird
 from player import Player
 import pygame
@@ -35,6 +35,22 @@ def redraw_game():
     pygame.display.update()
 
 
+def redraw_gameover():
+    background.draw_bg(display)
+    background.draw_floor(display)
+    player.draw(display)
+    for obstacle in obstacles:
+        obstacle.draw(display)
+    gameover_title.draw(display)
+    tutorial.draw(display)
+
+    # Blit to screen
+    resized_display = pygame.transform.scale(display, win_size)
+    win.blit(resized_display, (0, 0))
+
+    pygame.display.update()
+
+
 def menu_loop(): 
     run = True
     while run:
@@ -59,6 +75,7 @@ def menu_loop():
 
 def game_loop():
     run = True
+    collision = False
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -87,7 +104,7 @@ def game_loop():
             player_hitboxes = player.get_hitboxes()
             for hitbox in player_hitboxes:
                 if hitbox.colliderect(obstacle.hitbox):
-                    pass
+                    collision = True
 
             # Update obstacles on screen
             if obstacle.x + obstacle.dimensions[0] <= 0:
@@ -103,6 +120,28 @@ def game_loop():
 
         # Redraw
         redraw_game()
+        clock.tick(window.framerate)
+
+        # Check if player lost
+        if collision:
+            gameover_loop()
+
+    pygame.quit()
+    sys.exit()
+
+
+def gameover_loop():
+    for obstacle in obstacles:
+        obstacle.pause = True
+    player.pause = True
+
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+        redraw_gameover()
         clock.tick(window.framerate)
 
     pygame.quit()
@@ -124,6 +163,7 @@ if __name__ == "__main__":
     # Initialize objects
     background = Background()
     menu_title = MenuTitle()
+    gameover_title = GameoverTitle()
     tutorial = Tutorial()
 
     # Initialize entities

@@ -28,6 +28,8 @@ class Player:
             "duck": [img for img in clip_set_to_list_on_xaxis(spritesets[2])]
         }
 
+        self.pause = False
+
         # Movement
         self.x, self.y = (32, 87)
         self.speed_constant = 0.5
@@ -63,7 +65,8 @@ class Player:
         display.blit(img, (self.x, self.y + y_offset))
 
         # Update frame
-        self.idx += 1
+        if not self.pause:
+            self.idx += 1
 
     # Actions
     def run(self):
