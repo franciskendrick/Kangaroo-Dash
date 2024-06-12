@@ -133,6 +133,11 @@ def game_loop():
         for obstacle in removing_obstacles:
             obstacles.pop(obstacles.index(obstacle))
 
+        # Update background
+        moving_layers = [floor, bg_layers[2], bg_layers[1]]
+        for layer, vel in zip(moving_layers, bg_velocities):
+            layer.move(-vel)
+
         # Redraw
         redraw_game()
         clock.tick(window.framerate)
@@ -158,12 +163,16 @@ def gameover_loop():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    gameover_title.idx = 0
                     player.jump()
                     init_entities()
+
                     game_loop()
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    gameover_title.idx = 0
                     player.duck()
                     init_entities()
+
                     game_loop()
 
         redraw_gameover()
@@ -175,7 +184,7 @@ def gameover_loop():
 
 # Initialization functions
 def init_entities():
-    global player, obstacles
+    global player, obstacles, obs_velocity
 
     # Initialize player
     player = Player()
@@ -192,6 +201,9 @@ def init_entities():
         )
 
         add_x += 16
+
+    # Initialize obstacle velocity
+    obs_velocity = 2
 
 
 # Execute
@@ -210,6 +222,7 @@ if __name__ == "__main__":
     # Initialize background layers
     bg_layers = [Background(), Middleground(), Foreground()]
     floor = Floor()
+    velocity_ratio = [3, 1, 0.25]  # Original Velocity Ratio: 3 : 1 : 0.25
 
     # Initialize objects
     menu_title = MenuTitle()
@@ -218,6 +231,13 @@ if __name__ == "__main__":
 
     # Initialize entities
     init_entities()
+
+    # Calibrate background velocities
+    bg_velocities = [
+        obs_velocity,  # floor velocity
+        obs_velocity * (velocity_ratio[1] / velocity_ratio[0]),  # foreground velocity
+        obs_velocity * (velocity_ratio[2] / velocity_ratio[0])  # middleground velocity
+    ]
     
     # Run the game
     menu_loop()

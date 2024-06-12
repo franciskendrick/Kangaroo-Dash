@@ -19,31 +19,6 @@ class Window:
         # Framerate
         self.framerate = 60
 
-    def update_gameinfo(self):
-        pass
-
-
-# class Background:
-#     def __init__(self):
-#         path = f"{resources_path}/backgrounds"
-
-#         self.background = (
-#             pygame.image.load(f"{path}/background.png"), (0, 0))
-#         self.middleground = (
-#             pygame.image.load(f"{path}/middleground.png"), (0, 35))
-#         self.foreground = (
-#             pygame.image.load(f"{path}/foreground.png"), (0, 43))
-#         self.floor = (
-#             pygame.image.load(f"{path}/floor.png"), (0, 107))
-
-#     def draw_bg(self, display):
-#         display.blit(*self.background)
-#         display.blit(*self.middleground)
-#         display.blit(*self.foreground)
-
-#     def draw_floor(self, display):
-#         display.blit(*self.floor)
-
 
 class Layer:
     def init(self, filename, pos):
@@ -51,10 +26,26 @@ class Layer:
 
         self.image = pygame.image.load(
             f"{path}/{filename}.png")
-        self.pos = pos
+        self.x, self.y = pos
+        self.wd, self.ht = self.image.get_size()
+
+        self.moving = False
 
     def draw(self, display):
-        display.blit(self.image, self.pos)
+        if self.moving:
+            display.blit(self.image, (self.x_offset, self.y))  # top left
+            display.blit(self.image, (self.x_offset + self.wd, self.y))  # top-right
+            # display.blit(self.image, [self.x_offset, self.y_offset + self.ht])  # bottom-left
+            # display.blit(self.image, [self.x_offset + self.wd, self.y_offset + self.ht])  # bottom-right
+        else:
+            display.blit(self.image, (self.x, self.y))
+
+    def move(self, velocity):
+        self.moving = True
+
+        self.x -= velocity
+
+        self.x_offset = (0 - self.x % self.wd)
 
 
 class Background(Layer):
