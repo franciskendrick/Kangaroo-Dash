@@ -1,4 +1,4 @@
-from window import window, Background
+from window import window, Background, Middleground, Foreground, Floor
 from display_elements import MenuTitle, GameoverTitle, Tutorial
 from obstacles import BigCactus, SmallCactus, Bird
 from player import Player
@@ -7,11 +7,15 @@ import random
 import sys
 
 
+# Redraw
 def redraw_menu():
-    background.draw_bg(display)
-    background.draw_floor(display)
+    for bg in bg_layers:
+        bg.draw(display)
+    floor.draw(display)
+
     menu_title.draw(display)
     tutorial.draw(display)
+
     player.draw(display)
 
     # Blit to screen
@@ -22,11 +26,14 @@ def redraw_menu():
 
 
 def redraw_game():
-    background.draw_bg(display)
+    for bg in bg_layers:
+        bg.draw(display)
+
     player.draw(display)
     for obstacle in obstacles:
         obstacle.draw(display)
-    background.draw_floor(display)
+
+    floor.draw(display)
 
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
@@ -36,11 +43,14 @@ def redraw_game():
 
 
 def redraw_gameover():
-    background.draw_bg(display)
-    background.draw_floor(display)
+    for bg in bg_layers:
+        bg.draw(display)
+    floor.draw(display)
+
     player.draw(display)
     for obstacle in obstacles:
         obstacle.draw(display)
+
     gameover_title.draw(display)
     tutorial.draw(display)
 
@@ -51,6 +61,7 @@ def redraw_gameover():
     pygame.display.update()
 
 
+# Loops
 def menu_loop(): 
     run = True
     while run:
@@ -74,6 +85,10 @@ def menu_loop():
 
 
 def game_loop():
+    for obstacle in obstacles:
+        obstacle.pause = False
+    player.pause = False
+
     run = True
     collision = False
     while run:
@@ -141,6 +156,16 @@ def gameover_loop():
             if event.type == pygame.QUIT:
                 run = False
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    player.jump()
+                    init_entities()
+                    game_loop()
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    player.duck()
+                    init_entities()
+                    game_loop()
+
         redraw_gameover()
         clock.tick(window.framerate)
 
@@ -148,6 +173,28 @@ def gameover_loop():
     sys.exit()
 
 
+# Initialization functions
+def init_entities():
+    global player, obstacles
+
+    # Initialize player
+    player = Player()
+
+    # Initialize obstacles
+    obstacles = []
+    add_x = 0
+    for _ in range(3):
+        obstacle = random.choice([BigCactus, SmallCactus, Bird])
+        add_x = add_x if add_x == 0 else add_x - random.randint(1, 5)
+
+        obstacles.append(
+            obstacle(random.randint(0, 2), add_x)
+        )
+
+        add_x += 16
+
+
+# Execute
 if __name__ == "__main__":
     pygame.init()
 
@@ -160,26 +207,17 @@ if __name__ == "__main__":
     pygame.display.set_caption("Kangaroo Dash")
     clock = pygame.time.Clock()
 
+    # Initialize background layers
+    bg_layers = [Background(), Middleground(), Foreground()]
+    floor = Floor()
+
     # Initialize objects
-    background = Background()
     menu_title = MenuTitle()
     gameover_title = GameoverTitle()
     tutorial = Tutorial()
 
     # Initialize entities
-    player = Player()
-
-    obstacles = []
-    add_x = 0
-    for i in range(3):
-        obstacle = random.choice([BigCactus, SmallCactus, Bird])
-        add_x = add_x if add_x == 0 else add_x - random.randint(1, 5)
-
-        obstacles.append(
-            obstacle(random.randint(0, 2), add_x)
-        )
-
-        add_x += 16
+    init_entities()
     
     # Run the game
     menu_loop()

@@ -32,7 +32,7 @@ class Player:
 
         # Movement
         self.x, self.y = (32, 87)
-        self.speed_constant = 0.5
+        self.gravity_constant = 0.4
         self.t = 0
 
         # Hitbox
@@ -87,7 +87,7 @@ class Player:
         if self.action == "jump":
             y = (23/50) * ((self.t - 10) ** 2) + 41  # parabola
             self.y = y
-            self.t += self.speed_constant
+            self.t += self.gravity_constant
 
             if self.y > 87 or self.t >= 21:
                 self.t = 0

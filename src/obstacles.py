@@ -35,7 +35,7 @@ class BigCactus:
 
         self.x = (add_x * 16) + 256
         self.y = 79
-        self.vel = 1
+        self.vel = 2
 
         offset_x, offset_y = self.hitbox_offsets[size]
         wd, ht = self.hitbox_dimensions[size]
@@ -78,7 +78,7 @@ class SmallCactus:
 
         self.x = (add_x * 16) + 256
         self.y = 95
-        self.vel = 1
+        self.vel = 2
 
         offset_x, offset_y = self.hitbox_offset
         wd, ht = self.hitbox_dimensions[size]
@@ -115,7 +115,7 @@ class Bird:
 
         self.x = (add_x * 16) + 256
         self.y = (16 * (4 + height)) + 2
-        self.vel = 1
+        self.vel = 2
 
         offset_x, offset_y = self.hitbox_offset
         wd, ht = self.hitbox_dimensions
