@@ -170,8 +170,9 @@ class Score(NumberFont):
         self.hs_image = pygame.image.load(
             f"{resources_path}/display_elements/highscore.png")
 
+        highscore_file = open(f"{resources_path}/highscore.txt", "r")
         self.score = 0
-        self.highscore = 0
+        self.highscore = int(highscore_file.read())
 
     def draw(self, display):
         # Draw highscore
@@ -184,3 +185,9 @@ class Score(NumberFont):
         score = f"{round(self.score):,}"
         wd, _ = self.get_fontsize(score)
         self.render_font(display, score, (256 - wd, 1))
+
+    def update_highscore_file(self):
+        highscore_file = open(f"{resources_path}/highscore.txt", "w")
+        highscore_file.write(str(self.highscore))
+
+        print(True)

@@ -84,6 +84,7 @@ def menu_loop():
         redraw_menu()
         clock.tick(window.framerate)
 
+    score.update_highscore_file()
     pygame.quit()
     sys.exit()
 
@@ -155,6 +156,10 @@ def game_loop():
         if collision:
             gameover_loop()
 
+    if score.score > score.highscore:
+        score.highscore = round(score.score)
+    score.update_highscore_file()
+
     pygame.quit()
     sys.exit()
 
@@ -163,6 +168,9 @@ def gameover_loop():
     for obstacle in obstacles:
         obstacle.pause = True
     player.pause = True
+
+    if score.score > score.highscore:
+        score.highscore = round(score.score)
 
     run = True
     while run:
@@ -187,6 +195,7 @@ def gameover_loop():
         redraw_gameover()
         clock.tick(window.framerate)
 
+    score.update_highscore_file()
     pygame.quit()
     sys.exit()
 
