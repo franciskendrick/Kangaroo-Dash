@@ -1,6 +1,7 @@
 from window import window, Background, Middleground, Foreground, Floor
 from display_elements import MenuTitle, GameoverTitle, Tutorial, Score
 from obstacles import BigCactus, SmallCactus, Bird
+from audio import Music, SoundSFX
 from player import Player
 import pygame
 import random
@@ -75,11 +76,18 @@ def menu_loop():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_w:
+                    soundsfx.play_jump()
                     player.jump()
                     game_loop()
                 elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     player.duck()
                     game_loop()
+                
+                elif event.key == pygame.K_n:
+                    soundsfx.playing = not soundsfx.playing
+                elif event.key == pygame.K_m:
+                    music.playing = not music.playing
+                    music.update()
 
         redraw_menu()
         clock.tick(window.framerate)
@@ -107,8 +115,16 @@ def game_loop():
                 if (event.key == pygame.K_DOWN or event.key == pygame.K_s) and player.action == "duck":
                     player.run()
 
+                elif event.key == pygame.K_n:
+                    soundsfx.playing = not soundsfx.playing
+                elif event.key == pygame.K_m:
+                    music.playing = not music.playing
+                    music.update()
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] or keys[pygame.K_w]:
+            if player.action != "jump":
+                soundsfx.play_jump()
             player.jump()
         elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.action != "jump":
             player.duck()
@@ -127,6 +143,7 @@ def game_loop():
             for hitbox in player_hitboxes:
                 if hitbox.colliderect(obstacle.hitbox):
                     collision = True
+                    obstacle_hit_type = type(obstacle)
 
             # Update obstacles on screen
             if obstacle.x + obstacle.dimensions[0] <= 0:
@@ -154,6 +171,11 @@ def game_loop():
 
         # Check if player lost
         if collision:
+            if obstacle_hit_type == BigCactus or obstacle_hit_type == SmallCactus:
+                soundsfx.play_cactuscollide()
+            elif obstacle_hit_type == Bird:
+                soundsfx.play_birdcollide()
+
             gameover_loop()
 
     if score.score > score.highscore:
@@ -191,6 +213,12 @@ def gameover_loop():
                     init_entities()
 
                     game_loop()
+
+                elif event.key == pygame.K_n:
+                    soundsfx.playing = not soundsfx.playing
+                elif event.key == pygame.K_m:
+                    music.playing = not music.playing
+                    music.update()
 
         redraw_gameover()
         clock.tick(window.framerate)
@@ -247,6 +275,10 @@ if __name__ == "__main__":
     gameover_title = GameoverTitle()
     tutorial = Tutorial()
     score = Score()
+
+    # Initialize audio
+    music = Music()
+    soundsfx = SoundSFX()
 
     # Initialize entities
     init_entities()

@@ -189,5 +189,3 @@ class Score(NumberFont):
     def update_highscore_file(self):
         highscore_file = open(f"{resources_path}/highscore.txt", "w")
         highscore_file.write(str(self.highscore))
-
-        print(True)
