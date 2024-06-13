@@ -1,3 +1,4 @@
 from .clip_image import clip
 from .seperate_sets import separate_sets_from_xaxis, separate_sets_from_yaxis
 from .spriteset_to_list import clip_set_to_list_on_xaxis, clip_set_to_list_on_yaxis
+from .font_to_dict import clip_font_to_dict

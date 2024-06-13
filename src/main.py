@@ -1,5 +1,5 @@
 from window import window, Background, Middleground, Foreground, Floor
-from display_elements import MenuTitle, GameoverTitle, Tutorial
+from display_elements import MenuTitle, GameoverTitle, Tutorial, Score
 from obstacles import BigCactus, SmallCactus, Bird
 from player import Player
 import pygame
@@ -15,6 +15,7 @@ def redraw_menu():
 
     menu_title.draw(display)
     tutorial.draw(display)
+    score.draw(display)
 
     player.draw(display)
 
@@ -35,6 +36,8 @@ def redraw_game():
 
     floor.draw(display)
 
+    score.draw(display)
+
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
     win.blit(resized_display, (0, 0))
@@ -53,6 +56,7 @@ def redraw_gameover():
 
     gameover_title.draw(display)
     tutorial.draw(display)
+    score.draw(display) 
 
     # Blit to screen
     resized_display = pygame.transform.scale(display, win_size)
@@ -88,6 +92,8 @@ def game_loop():
     for obstacle in obstacles:
         obstacle.pause = False
     player.pause = False
+
+    score.score = 0
 
     run = True
     collision = False
@@ -137,6 +143,9 @@ def game_loop():
         moving_layers = [floor, bg_layers[2], bg_layers[1]]
         for layer, vel in zip(moving_layers, bg_velocities):
             layer.move(-vel)
+
+        # Update score
+        score.score += 0.25
 
         # Redraw
         redraw_game()
@@ -228,6 +237,7 @@ if __name__ == "__main__":
     menu_title = MenuTitle()
     gameover_title = GameoverTitle()
     tutorial = Tutorial()
+    score = Score()
 
     # Initialize entities
     init_entities()
