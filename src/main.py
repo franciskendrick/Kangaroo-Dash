@@ -5,6 +5,7 @@ from audio import Music, SoundSFX
 from player import Player
 import pygame
 import random
+import math
 import sys
 
 
@@ -75,13 +76,14 @@ def menu_loop():
                 run = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    soundsfx.play_jump()
-                    player.jump()
-                    game_loop()
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    player.duck()
-                    game_loop()
+                if menu_title.idx >= 14 * 6:
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        soundsfx.play_jump()
+                        player.jump()
+                        game_loop()
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        player.duck()
+                        game_loop()
                 
                 elif event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
@@ -101,8 +103,7 @@ def game_loop():
     for obstacle in obstacles:
         obstacle.pause = False
     player.pause = False
-
-    score.score = 0
+    player.update_multiplier(obs_velocity)
 
     run = True
     collision = False
@@ -152,10 +153,11 @@ def game_loop():
                 add_x = (obstacles[-1].x // 16) - random.randint(1, 7)
                 new_obstacle = random.choice([BigCactus, SmallCactus, Bird])
                 obstacles.append(
-                    new_obstacle(random.randint(0, 2), add_x))
-                
+                    new_obstacle(random.randint(0, 2), add_x, obs_velocity)
+                )
+
         for obstacle in removing_obstacles:
-            obstacles.pop(obstacles.index(obstacle))
+            obstacles.pop(obstacles.index(obstacle))    
 
         # Update background
         moving_layers = [floor, bg_layers[2], bg_layers[1]]
@@ -164,6 +166,21 @@ def game_loop():
 
         # Update score
         score.score += 0.25
+
+        if obs_velocity < 8.5:
+            # Update obstacle velocity
+            update_obsvelocity(score.score)
+
+            # Update player
+            player.update_gravityconstant(obs_velocity)
+            player.update_multiplier(obs_velocity)
+
+            # Calibrate background velocities
+            calibrate_bgvelocites()
+
+            # Calibrate obstacles' velocities
+            for obstacle in obstacles:
+                obstacle.vel = obs_velocity
 
         # Redraw
         redraw_game()
@@ -176,7 +193,7 @@ def game_loop():
             elif obstacle_hit_type == Bird:
                 soundsfx.play_birdcollide()
 
-            gameover_loop()
+            # gameover_loop()
 
     if score.score > score.highscore:
         score.highscore = round(score.score)
@@ -201,18 +218,19 @@ def gameover_loop():
                 run = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
-                    gameover_title.idx = 0
-                    player.jump()
-                    init_entities()
+                if gameover_title.idx >= 13 * 6:
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        gameover_title.idx = 0
+                        player.jump()
+                        init_entities()
 
-                    game_loop()
-                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                    gameover_title.idx = 0
-                    player.duck()
-                    init_entities()
+                        game_loop()
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        gameover_title.idx = 0
+                        player.duck()
+                        init_entities()
 
-                    game_loop()
+                        game_loop()
 
                 elif event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
@@ -228,12 +246,20 @@ def gameover_loop():
     sys.exit()
 
 
+# Math functions
+def get_next_score_threshold(idx):
+    return round((41.07016289 * (1.02264021 ** idx)))  # exponential eqyatuibL 41.07016289 * 1.02264021^x
+
+
 # Initialization functions
 def init_entities():
     global player, obstacles, obs_velocity
 
+    # Initialize obstacle velocity
+    obs_velocity = 2
+
     # Initialize player
-    player = Player()
+    player = Player(obs_velocity)
 
     # Initialize obstacles
     obstacles = []
@@ -243,13 +269,35 @@ def init_entities():
         add_x = add_x if add_x == 0 else add_x - random.randint(1, 5)
 
         obstacles.append(
-            obstacle(random.randint(0, 2), add_x)
+            obstacle(random.randint(0, 2), add_x, obs_velocity)
         )
 
         add_x += 16
 
-    # Initialize obstacle velocity
-    obs_velocity = 2
+
+def calibrate_bgvelocites():
+    global bg_velocities
+
+    velocity_ratio = [3, 1, 0.25]  # Original Velocity Ratio: 3 : 1 : 0.25
+
+    bg_velocities = [
+        obs_velocity,  # floor velocity
+        obs_velocity * (velocity_ratio[1] / velocity_ratio[0]),  # foreground velocity
+        obs_velocity * (velocity_ratio[2] / velocity_ratio[0])  # middleground velocity
+    ]
+
+
+# Update functions
+def update_obsvelocity(score):
+    global obs_velocity, next_score_threshold, score_threshold_idx
+
+    if next_score_threshold <= score:
+        next_score_threshold += get_next_score_threshold(score_threshold_idx)
+
+        obs_velocity += 0.1
+        obs_velocity = round(obs_velocity, 1)
+
+        score_threshold_idx += 1
 
 
 # Execute
@@ -268,7 +316,6 @@ if __name__ == "__main__":
     # Initialize background layers
     bg_layers = [Background(), Middleground(), Foreground()]
     floor = Floor()
-    velocity_ratio = [3, 1, 0.25]  # Original Velocity Ratio: 3 : 1 : 0.25
 
     # Initialize objects
     menu_title = MenuTitle()
@@ -282,13 +329,11 @@ if __name__ == "__main__":
 
     # Initialize entities
     init_entities()
+    score_threshold_idx = 0
+    next_score_threshold = get_next_score_threshold(score_threshold_idx)
 
     # Calibrate background velocities
-    bg_velocities = [
-        obs_velocity,  # floor velocity
-        obs_velocity * (velocity_ratio[1] / velocity_ratio[0]),  # foreground velocity
-        obs_velocity * (velocity_ratio[2] / velocity_ratio[0])  # middleground velocity
-    ]
+    calibrate_bgvelocites()
     
     # Run the game
     menu_loop()

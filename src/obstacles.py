@@ -23,7 +23,7 @@ class BigCactus:
         (46, 31)
     ]
 
-    def __init__(self, size, add_x):
+    def __init__(self, size, add_x, velocity):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/big_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
@@ -35,7 +35,7 @@ class BigCactus:
 
         self.x = (add_x * 16) + 256
         self.y = 79
-        self.vel = 2
+        self.vel = velocity
 
         offset_x, offset_y = self.hitbox_offsets[size]
         wd, ht = self.hitbox_dimensions[size]
@@ -66,7 +66,7 @@ class SmallCactus:
         (46, 16)
     ]
 
-    def __init__(self, size, add_x):
+    def __init__(self, size, add_x, velocity):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/small_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
@@ -78,7 +78,7 @@ class SmallCactus:
 
         self.x = (add_x * 16) + 256
         self.y = 95
-        self.vel = 2
+        self.vel = velocity
 
         offset_x, offset_y = self.hitbox_offset
         wd, ht = self.hitbox_dimensions[size]
@@ -104,7 +104,7 @@ class Bird:
     hitbox_offset = (2, 1)
     hitbox_dimensions = (13, 9)
 
-    def __init__(self, height, add_x):
+    def __init__(self, height, add_x, velocity):
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/bird.png")
         self.images = clip_set_to_list_on_xaxis(spriteset)
@@ -115,7 +115,7 @@ class Bird:
 
         self.x = (add_x * 16) + 256
         self.y = (16 * (4 + height)) + 2
-        self.vel = 2
+        self.vel = velocity
 
         offset_x, offset_y = self.hitbox_offset
         wd, ht = self.hitbox_dimensions

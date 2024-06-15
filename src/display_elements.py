@@ -178,7 +178,7 @@ class Score(NumberFont):
         # Draw highscore
         display.blit(self.hs_image, (1, 1))
 
-        highscore = str(self.highscore)
+        highscore = f"{round(self.highscore):,}"
         self.render_font(display, highscore, (16, 1))
 
         # Draw current score

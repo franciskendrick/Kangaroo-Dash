@@ -14,13 +14,15 @@ resources_path = os.path.abspath(
 class Player:
     duck_offset = 12
 
-    def __init__(self):
+    def __init__(self, obs_velocity):
         # Sprite
         spritesets = separate_sets_from_yaxis(
             pygame.image.load(f"{resources_path}/sprites/kangaroo.png"),
             (255, 0, 0))
         
         self.idx = 0
+        self.multiplier = 8
+
         self.imgtype = "idle"
         self.images = {
             "idle": [img for img in clip_set_to_list_on_xaxis(spritesets[0])],
@@ -32,7 +34,7 @@ class Player:
 
         # Movement
         self.x, self.y = (32, 87)
-        self.gravity_constant = 0.4
+        self.gravity_constant = (0.16 * obs_velocity) + 0.09  # linear equation: 0.16x + 0.09
         self.t = 0
 
         # Hitbox
@@ -57,11 +59,11 @@ class Player:
         y_offset = 12 if self.imgtype == "duck" else 0
 
         # Update frame
-        if self.idx >= len(images) * 8:
+        if self.idx >= len(images) * self.multiplier:
             self.idx = 0
 
         # Draw
-        img = images[self.idx // 8]
+        img = images[self.idx // self.multiplier]
         display.blit(img, (self.x, self.y + y_offset))
 
         # Update frame
@@ -85,7 +87,7 @@ class Player:
     def update(self):
         # Update gravity
         if self.action == "jump":
-            y = (23/50) * ((self.t - 10) ** 2) + 41  # parabola
+            y = (23/50) * ((self.t - 10) ** 2) + 41  # parabola equation: (23/50) * ((x-10)^2) + 41
             self.y = y
             self.t += self.gravity_constant
 
@@ -106,6 +108,12 @@ class Player:
                 pygame.Rect(self.x + 24, self.y + 3 + self.duck_offset, 4, 4)
             ]
         }
+
+    def update_multiplier(self, obs_velocity):
+        self.multiplier = -(int(obs_velocity)) + 10  # linear equation: -x + 10
+
+    def update_gravityconstant(self, obs_velocity):
+        self.gravity_constant = (0.16 * obs_velocity) + 0.09  # linear equation: 0.16x + 0.09
 
     # Fetch functions
     def get_hitboxes(self):
