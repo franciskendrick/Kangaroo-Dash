@@ -1,4 +1,5 @@
 from functions import clip_set_to_list_on_xaxis
+from window import window
 import pygame
 import os
 
@@ -48,7 +49,7 @@ class BigCactus:
 
     def update(self):
         # Update movement
-        self.x -= self.vel
+        self.x -= self.vel * window.delta_time
 
         # Update hitbox
         offset_x, offset_y = self.hitbox_offsets[self.size]
@@ -90,7 +91,7 @@ class SmallCactus:
         display.blit(self.image, (self.x, self.y))
 
     def update(self):
-        self.x -= self.vel
+        self.x -= self.vel * window.delta_time
 
         # Update hitbox
         offset_x, offset_y = self.hitbox_offset
@@ -137,7 +138,7 @@ class Bird:
             self.idx += 1
 
     def update(self):
-        self.x -= self.vel
+        self.x -= self.vel * window.delta_time
 
         # Update hitbox
         offset_x, offset_y = self.hitbox_offset

@@ -1,4 +1,5 @@
 from functions import separate_sets_from_yaxis, clip_set_to_list_on_xaxis
+from window import window
 import pygame
 import os
 
@@ -35,7 +36,7 @@ class Player:
         # Movement
         self.x, self.y = (32, 87)
         self.gravity_constant = (0.16 * obs_velocity) + 0.09  # linear equation: 0.16x + 0.09
-        self.t = 0
+        self.jump_time = 0
 
         # Hitbox
         self.hitboxes = {
@@ -87,12 +88,12 @@ class Player:
     def update(self):
         # Update gravity
         if self.action == "jump":
-            y = (23/50) * ((self.t - 10) ** 2) + 41  # parabola equation: (23/50) * ((x-10)^2) + 41
+            y = (23/50) * ((self.jump_time - 10) ** 2) + 41  # parabola equation: (23/50) * ((x-10)^2) + 41
             self.y = y
-            self.t += self.gravity_constant
+            self.jump_time += self.gravity_constant * window.delta_time
 
-            if self.y > 87 or self.t >= 21:
-                self.t = 0
+            if self.y > 87 or self.jump_time >= 21:
+                self.jump_time = 0
                 self.y = 87
                 self.run()
 

@@ -71,6 +71,8 @@ def redraw_gameover():
 def menu_loop(): 
     run = True
     while run:
+        window.update_deltatime()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -85,7 +87,7 @@ def menu_loop():
                         player.duck()
                         game_loop()
                 
-                elif event.key == pygame.K_n:
+                if event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
                 elif event.key == pygame.K_m:
                     music.playing = not music.playing
@@ -108,6 +110,8 @@ def game_loop():
     run = True
     collision = False
     while run:
+        window.update_deltatime()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -157,12 +161,12 @@ def game_loop():
                 )
 
         for obstacle in removing_obstacles:
-            obstacles.pop(obstacles.index(obstacle))    
+            obstacles.pop(obstacles.index(obstacle))
 
         # Update background
         moving_layers = [floor, bg_layers[2], bg_layers[1]]
         for layer, vel in zip(moving_layers, bg_velocities):
-            layer.move(-vel)
+            layer.move(vel)
 
         # Update score
         score.score += 0.25
@@ -193,7 +197,7 @@ def game_loop():
             elif obstacle_hit_type == Bird:
                 soundsfx.play_birdcollide()
 
-            # gameover_loop()
+            gameover_loop()
 
     if score.score > score.highscore:
         score.highscore = round(score.score)
@@ -213,6 +217,8 @@ def gameover_loop():
 
     run = True
     while run:
+        window.update_deltatime()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -232,7 +238,7 @@ def gameover_loop():
 
                         game_loop()
 
-                elif event.key == pygame.K_n:
+                if event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
                 elif event.key == pygame.K_m:
                     music.playing = not music.playing

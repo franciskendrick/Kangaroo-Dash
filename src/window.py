@@ -1,4 +1,5 @@
 import pygame
+import time
 import os
 
 pygame.init()
@@ -18,6 +19,13 @@ class Window:
 
         # Framerate
         self.framerate = 60
+        self.last_time = time.perf_counter()
+        self.update_deltatime()
+
+    def update_deltatime(self):
+        self.delta_time = time.perf_counter() - self.last_time
+        self.delta_time *= 60
+        self.last_time = time.perf_counter()
 
 
 class Layer:
@@ -35,16 +43,12 @@ class Layer:
         if self.moving:
             display.blit(self.image, (self.x_offset, self.y))  # top left
             display.blit(self.image, (self.x_offset + self.wd, self.y))  # top-right
-            # display.blit(self.image, [self.x_offset, self.y_offset + self.ht])  # bottom-left
-            # display.blit(self.image, [self.x_offset + self.wd, self.y_offset + self.ht])  # bottom-right
         else:
             display.blit(self.image, (self.x, self.y))
 
     def move(self, velocity):
         self.moving = True
-
-        self.x -= velocity
-
+        self.x += velocity
         self.x_offset = (0 - self.x % self.wd)
 
 
