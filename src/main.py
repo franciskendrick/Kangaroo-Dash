@@ -132,6 +132,9 @@ def game_loop():
     player.pause = False
     player.update_multiplier(obs_velocity)
 
+    # Reset score to zero
+    score.score = 0
+
     run = True
     collision = False
     while run:
