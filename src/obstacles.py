@@ -25,19 +25,25 @@ class BigCactus:
     ]
 
     def __init__(self, size, add_x, velocity):
+        # Images
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/big_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
+
         self.image = images[size]
         self.dimensions = self.image.get_size()
         self.size = size
 
         self.pause = False
 
+        # Position
         self.x = (add_x * 16) + 256
         self.y = 79
+
+        # Movement
         self.vel = velocity
 
+        # Hitbox
         offset_x, offset_y = self.hitbox_offsets[size]
         wd, ht = self.hitbox_dimensions[size]
         self.hitbox = pygame.Rect(
@@ -68,19 +74,25 @@ class SmallCactus:
     ]
 
     def __init__(self, size, add_x, velocity):
+        # Images
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/small_cactus.png")
         images = clip_set_to_list_on_xaxis(spriteset)
+
         self.image = images[size]
         self.dimensions = self.image.get_size()
         self.size = size
 
         self.pause = False
 
+        # Position
         self.x = (add_x * 16) + 256
         self.y = 95
+
+        # Movement
         self.vel = velocity
 
+        # Hitbox
         offset_x, offset_y = self.hitbox_offset
         wd, ht = self.hitbox_dimensions[size]
         self.hitbox = pygame.Rect(
@@ -91,6 +103,7 @@ class SmallCactus:
         display.blit(self.image, (self.x, self.y))
 
     def update(self):
+        # Update movement
         self.x -= self.vel * window.delta_time
 
         # Update hitbox
@@ -106,18 +119,22 @@ class Bird:
     hitbox_dimensions = (13, 9)
 
     def __init__(self, height, add_x, velocity):
+        # Images
         spriteset = pygame.image.load(
             f"{resources_path}/sprites/bird.png")
         self.images = clip_set_to_list_on_xaxis(spriteset)
+        self.dimensions = self.images[0].get_size()
         self.pause = False
         self.idx = 0
 
-        self.dimensions = self.images[0].get_size()
-
+        # Position
         self.x = (add_x * 16) + 256
         self.y = (16 * (4 + height)) + 2
+
+        # Movement
         self.vel = velocity
 
+        # Hitbox
         offset_x, offset_y = self.hitbox_offset
         wd, ht = self.hitbox_dimensions
         self.hitbox = pygame.Rect(
@@ -138,6 +155,7 @@ class Bird:
             self.idx += 1
 
     def update(self):
+        # Update movement
         self.x -= self.vel * window.delta_time
 
         # Update hitbox

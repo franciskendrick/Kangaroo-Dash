@@ -17,17 +17,17 @@ class Title:
             f"{resources_path}/display_elements/{filename}.png")
         self.idx = 0
 
-        # Frames
+        # Initialize frames
         self.frames = []
         self.shadows = []
         for img in clip_set_to_list_on_yaxis(animation_set):
-            # Initialize
+            # Initialize rectangles 
             img_rect = pygame.Rect(
                 (x, y), img.get_size())
             shadow_rect = pygame.Rect(
                 (x - 2, y + 1), img.get_size())
             
-            # Resize
+            # Resize image
             wd, ht = img.get_size()
             size = (wd * 2, ht * 2)
             img = pygame.transform.scale(img, size)
@@ -139,10 +139,10 @@ class Tutorial:
             f"{resources_path}/display_elements/tutorial.png")
         self.idx = 0
 
-        # Frames
+        # Initialize frames
         self.frames = []
         for img in clip_set_to_list_on_yaxis(spriteset):
-            # Initialize
+            # Initialize rectangle
             img_rect = pygame.Rect(
                 (67, 81), img.get_size())
             
@@ -167,10 +167,14 @@ class Score(NumberFont):
     def __init__(self):
         super().__init__()
 
+        # Highscore label
         self.hs_image = pygame.image.load(
             f"{resources_path}/display_elements/highscore.png")
 
+        # Get highscore file
         highscore_file = open(f"{resources_path}/highscore.txt", "r")
+
+        # Data
         self.score = 0
         self.highscore = int(highscore_file.read())
 

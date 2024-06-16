@@ -16,14 +16,12 @@ class Player:
     duck_offset = 12
 
     def __init__(self, obs_velocity):
-        # Sprite
+        # Get spritesets
         spritesets = separate_sets_from_yaxis(
             pygame.image.load(f"{resources_path}/sprites/kangaroo.png"),
             (255, 0, 0))
         
-        self.idx = 0
-        self.multiplier = 8
-
+        # Images
         self.imgtype = "idle"
         self.images = {
             "idle": [img for img in clip_set_to_list_on_xaxis(spritesets[0])],
@@ -31,10 +29,15 @@ class Player:
             "duck": [img for img in clip_set_to_list_on_xaxis(spritesets[2])]
         }
 
+        # Animation data
+        self.idx = 0
+        self.multiplier = 8
         self.pause = False
 
-        # Movement
+        # Position
         self.x, self.y = (32, 87)
+        
+        # Movement
         self.gravity_constant = (0.16 * obs_velocity) + 0.09  # linear equation: 0.16x + 0.09
         self.jump_time = 0
 
@@ -56,6 +59,7 @@ class Player:
 
     # Draw
     def draw(self, display):
+        # Get images and offset
         images = self.images[self.imgtype]
         y_offset = 12 if self.imgtype == "duck" else 0
 

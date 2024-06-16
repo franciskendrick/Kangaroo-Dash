@@ -5,20 +5,22 @@ from audio import Music, SoundSFX
 from player import Player
 import pygame
 import random
-import math
 import sys
 
 
 # Redraw
 def redraw_menu():
+    # Draw backgrounds and floor
     for bg in bg_layers:
         bg.draw(display)
     floor.draw(display)
 
+    # Draw display elements
     menu_title.draw(display)
     tutorial.draw(display)
     score.draw(display)
 
+    # Draw entities
     player.draw(display)
 
     # Blit to screen
@@ -29,15 +31,19 @@ def redraw_menu():
 
 
 def redraw_game():
+    # Draw backgrounds 
     for bg in bg_layers:
         bg.draw(display)
 
+    # Draw entities
     player.draw(display)
     for obstacle in obstacles:
         obstacle.draw(display)
 
+    # Draw floor
     floor.draw(display)
 
+    # Draw display elements
     score.draw(display)
 
     # Blit to screen
@@ -48,14 +54,17 @@ def redraw_game():
 
 
 def redraw_gameover():
+    # Draw backgrounds and floor
     for bg in bg_layers:
         bg.draw(display)
     floor.draw(display)
 
+    # Draw entities
     player.draw(display)
     for obstacle in obstacles:
         obstacle.draw(display)
 
+    # Draw display elements
     gameover_title.draw(display)
     tutorial.draw(display)
     score.draw(display) 
@@ -71,37 +80,53 @@ def redraw_gameover():
 def menu_loop(): 
     run = True
     while run:
+        # Update delta time 
         window.update_deltatime()
 
+        # Get game events
         for event in pygame.event.get():
+            # Check if user closed the game window
             if event.type == pygame.QUIT:
                 run = False
 
+            # Check if a key has been pressed
             if event.type == pygame.KEYDOWN:
+                # Check if the menu title animation has finished
                 if menu_title.idx >= 14 * 6:
+                    # Jump key
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         soundsfx.play_jump()
                         player.jump()
                         game_loop()
+                    # Duck key
                     elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         player.duck()
                         game_loop()
                 
+                # Toggle sound effects
                 if event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
+                # Toggle music
                 elif event.key == pygame.K_m:
                     music.playing = not music.playing
                     music.update()
 
+        # Redraw
         redraw_menu()
+
+        # Framerate
         clock.tick(window.framerate)
 
+    # Update highscore file when the loop ends
     score.update_highscore_file()
+
+    # Exit program
     pygame.quit()
     sys.exit()
 
 
 def game_loop():
+    # Unpase entities
     for obstacle in obstacles:
         obstacle.pause = False
     player.pause = False
@@ -110,22 +135,31 @@ def game_loop():
     run = True
     collision = False
     while run:
+        # Update delta time 
         window.update_deltatime()
 
+        # Check game events
         for event in pygame.event.get():
+            # Check if user closed the game window
             if event.type == pygame.QUIT:
                 run = False
 
+            # Check if a key has been released
             if event.type == pygame.KEYUP:
                 if (event.key == pygame.K_DOWN or event.key == pygame.K_s) and player.action == "duck":
                     player.run()
 
-                elif event.key == pygame.K_n:
+            # Check if a key has been pressed
+            if event.type == pygame.KEYDOWN:
+                # Toggle sound effects
+                if event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
+                # Toggle music
                 elif event.key == pygame.K_m:
                     music.playing = not music.playing
                     music.update()
 
+        # Check if a key has been pressed
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] or keys[pygame.K_w]:
             if player.action != "jump":
@@ -140,30 +174,33 @@ def game_loop():
         # Update obstacles
         removing_obstacles = []
         for obstacle in obstacles:
-            # Update movement
+            # Update obstacle movement
             obstacle.update()
 
-            # Collision detection
+            # Check for player and obstacle collision 
             player_hitboxes = player.get_hitboxes()
             for hitbox in player_hitboxes:
                 if hitbox.colliderect(obstacle.hitbox):
                     collision = True
                     obstacle_hit_type = type(obstacle)
 
-            # Update obstacles on screen
+            # If obstacle is out of the screen
             if obstacle.x + obstacle.dimensions[0] <= 0:
+                # Add obstacle to list of obstacles being removed
                 removing_obstacles.append(obstacle)
                 
+                # Add new obstacle
                 add_x = (obstacles[-1].x // 16) - random.randint(1, 7)
                 new_obstacle = random.choice([BigCactus, SmallCactus, Bird])
                 obstacles.append(
                     new_obstacle(random.randint(0, 2), add_x, obs_velocity)
                 )
 
+        # Pops obstacles that are out of the screen
         for obstacle in removing_obstacles:
             obstacles.pop(obstacles.index(obstacle))
 
-        # Update background
+        # Update background movement
         moving_layers = [floor, bg_layers[2], bg_layers[1]]
         for layer, vel in zip(moving_layers, bg_velocities):
             layer.move(vel)
@@ -188,6 +225,8 @@ def game_loop():
 
         # Redraw
         redraw_game()
+
+        # Framerate
         clock.tick(window.framerate)
 
         # Check if player lost
@@ -199,62 +238,77 @@ def game_loop():
 
             gameover_loop()
 
-    if score.score > score.highscore:
-        score.highscore = round(score.score)
+    # Update highscore file when the loop ends
     score.update_highscore_file()
 
+    # Exit program
     pygame.quit()
     sys.exit()
 
 
 def gameover_loop():
+    # Pause entities
     for obstacle in obstacles:
         obstacle.pause = True
     player.pause = True
 
+    # Update highscore if current score is higher
     if score.score > score.highscore:
         score.highscore = round(score.score)
 
     run = True
     while run:
+        # Update delta time
         window.update_deltatime()
 
+        # Check game events
         for event in pygame.event.get():
+            # Check if user closed the game window
             if event.type == pygame.QUIT:
                 run = False
 
+            # Check if a key has been pressed
             if event.type == pygame.KEYDOWN:
+                # Check if the gameover title animation has finished
                 if gameover_title.idx >= 13 * 6:
+                    # Jump key
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
                         gameover_title.idx = 0
                         player.jump()
                         init_entities()
-
                         game_loop()
+                    # Duck key
                     elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         gameover_title.idx = 0
                         player.duck()
                         init_entities()
-
                         game_loop()
 
+                # Toggle sound effects
                 if event.key == pygame.K_n:
                     soundsfx.playing = not soundsfx.playing
+                # Toggle music
                 elif event.key == pygame.K_m:
                     music.playing = not music.playing
                     music.update()
 
+        # Redraw
         redraw_gameover()
+
+        # Framerate
         clock.tick(window.framerate)
 
+    # Update highscore file when the loop ends
     score.update_highscore_file()
+
+    # Exit program
     pygame.quit()
     sys.exit()
 
 
 # Math functions
 def get_next_score_threshold(idx):
-    return round((41.07016289 * (1.02264021 ** idx)))  # exponential eqyatuibL 41.07016289 * 1.02264021^x
+    return round((41.07016289 * (1.02264021 ** idx)))  # exponential equation: 41.07016289 * 1.02264021^x
 
 
 # Initialization functions
@@ -284,7 +338,7 @@ def init_entities():
 def calibrate_bgvelocites():
     global bg_velocities
 
-    velocity_ratio = [3, 1, 0.25]  # Original Velocity Ratio: 3 : 1 : 0.25
+    velocity_ratio = [3, 1, 0.25]  # velocity ratio: 3 : 1 : 0.25
 
     bg_velocities = [
         obs_velocity,  # floor velocity
