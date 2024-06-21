@@ -178,7 +178,7 @@ class Score(NumberFont):
         self.score = 0
         self.highscore = int(highscore_file.read())
 
-    def draw(self, display):
+    def draw(self, display):    
         # Draw highscore
         display.blit(self.hs_image, (1, 1))
 
