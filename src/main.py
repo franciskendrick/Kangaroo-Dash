@@ -7,6 +7,9 @@ import pygame
 import random
 import sys
 
+import pyfirmata
+import time
+
 
 # Redraw
 def redraw_menu():
@@ -78,12 +81,17 @@ def redraw_gameover():
 
 # Loops
 def menu_loop(): 
+    # Start the iterator thread to avoid buffer overflow
+    it = pyfirmata.util.Iterator(board)
+    it.start()
+
     run = True
     while run:
         # Update delta time 
         window.update_deltatime()
 
         # Get game events
+        # Keyboard events
         for event in pygame.event.get():
             # Check if user closed the game window
             if event.type == pygame.QUIT:
@@ -110,6 +118,18 @@ def menu_loop():
                 elif event.key == pygame.K_m:
                     music.playing = not music.playing
                     music.update()
+
+        # Arduino events
+        button_state_7 = button_pin_7.read()
+        button_state_8 = button_pin_8.read()
+        print(button_state_7, button_state_8)
+        if button_state_8:  # jump key
+            soundsfx.play_jump()
+            player.jump()
+            game_loop()
+        elif button_state_7:  # duck key
+            player.duck()
+            game_loop()
 
         # Redraw
         redraw_menu()
@@ -164,12 +184,18 @@ def game_loop():
 
         # Check if a key has been pressed
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
+        button_state_7 = button_pin_7.read()
+        button_state_8 = button_pin_8.read()
+        print(button_state_7, button_state_8)
+
+        if keys[pygame.K_UP] or keys[pygame.K_w] or button_state_8:
             if player.action != "jump":
                 soundsfx.play_jump()
             player.jump()
-        elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and player.action != "jump":
+        elif (keys[pygame.K_DOWN] or keys[pygame.K_s] or button_state_7) and player.action != "jump":
             player.duck()
+        elif not button_state_7 and player.action != "jump":
+            player.run()
 
         # Update player
         player.update()
@@ -286,6 +312,11 @@ def gameover_loop():
                         player.duck()
                         init_entities()
                         game_loop()
+                    # Back to menu
+                    elif event.key == pygame.K_SPACE:
+                        gameover_title.idx = 0
+                        init_entities()
+                        menu_loop()
 
                 # Toggle sound effects
                 if event.key == pygame.K_n:
@@ -336,6 +367,18 @@ def init_entities():
         )
 
         add_x += 16
+
+
+def init_arduino():
+    global board, button_pin_7, button_pin_8
+
+    # Define the COM port where the Arduino is connected
+    comport = 'COM4'
+    board = pyfirmata.Arduino(comport)
+
+    # Set up Pin 8 and Pin 9 as digital inputs
+    button_pin_7 = board.get_pin('d:7:i')
+    button_pin_8 = board.get_pin('d:8:i')
 
 
 def calibrate_bgvelocites():
@@ -397,6 +440,9 @@ if __name__ == "__main__":
 
     # Calibrate background velocities
     calibrate_bgvelocites()
+
+    # Initialize Arduino
+    init_arduino()
     
     # Run the game
     menu_loop()
